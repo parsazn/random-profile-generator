@@ -1,7 +1,6 @@
+import { Box, Grid, Skeleton, Stack } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import logo from "./logo.svg";
-import "./App.css";
-
 
 
 function App() {
@@ -35,32 +34,29 @@ function App() {
   
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        {!fetchError && items.length > 0 && items.map(
+    <>
+        
+        {!isLoading && !fetchError && items.length > 0 && items.map(
           (item) => {
             const {gender , name} = item ; 
             console.log(name)
             return (
-              <h5 key={gender}>{name.title.toUpperCase( )}</h5>
+              <h5 key={gender}>{name.title.toUpperCase()}</h5>
             )
           }
         )
         }
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
         {isLoading && 
-          <h1>Error</h1>
+          <Grid container spacing={2} sx={{height: '100vh' , p: 8}}>
+            <Grid item xs={12} sm={4} >
+                <Skeleton variant="rectangular" width={'100%'} height={'100%'} />
+            </Grid>
+            <Grid item xs={12} sm={8}>
+                 <Skeleton variant="rectangular" width={'100%'} height={'100%'} />
+            </Grid>
+        </Grid>
         }
-      </header>
-    </div>
+      </>
   );
 }
 
