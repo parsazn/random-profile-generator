@@ -7,21 +7,29 @@ import "./App.css";
 function App() {
   const API_URL = "https://randomuser.me/api/";
   const [items, setItems] = useState<any[]>([]);
+  const [fetchError , setFetchError] = useState(null);
+  const [isLoading , setIsLoading] = useState(true);
 
   useEffect(() => {
     
     const fetchItems = async () => { //as we only use this to fetch items we can define the function here 
       try{
-        const response = await fetch(API_URL)
+        const response = await fetch(API_URL) ; 
+        if(!response.ok) throw new Error('Did not recieved expected data');
         const listItems = await response.json() ; 
-        setItems(listItems.results)
-        console.log(listItems.results)
-      } catch (e: unknown ){
-        console.log(e)
+        setItems(listItems.results);
+        setFetchError(null);
+        console.log(listItems.results);
+      } catch (err : any ){
+        setFetchError(err.message)
+      }finally{
+        setIsLoading(false);
       }
     }
-
-    fetchItems();
+    setTimeout(()=> {
+      (async () => await fetchItems())();
+    }, 7000)
+    
   }, []);
 
   
@@ -30,11 +38,12 @@ function App() {
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        {items && items.map(
+        {!fetchError && items.length > 0 && items.map(
           (item) => {
-            const {gender} = item ; 
+            const {gender , name} = item ; 
+            console.log(name)
             return (
-              <h5 key={gender}>{gender}</h5>
+              <h5 key={gender}>{name.title.toUpperCase( )}</h5>
             )
           }
         )
@@ -47,6 +56,9 @@ function App() {
         >
           Learn React
         </a>
+        {isLoading && 
+          <h1>Error</h1>
+        }
       </header>
     </div>
   );
