@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 
+
+
 function App() {
   const API_URL = "https://randomuser.me/api/";
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState<any[]>([]);
 
   useEffect(() => {
     
@@ -12,8 +14,8 @@ function App() {
       try{
         const response = await fetch(API_URL)
         const listItems = await response.json() ; 
-        setItems(listItems.results[0])
-        console.log(listItems.results[0])
+        setItems(listItems.results)
+        console.log(listItems.results)
       } catch (e: unknown ){
         console.log(e)
       }
@@ -22,13 +24,21 @@ function App() {
     fetchItems();
   }, []);
 
+  
+
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          
-        </p>
+        {items && items.map(
+          (item) => {
+            const {gender} = item ; 
+            return (
+              <h5 key={gender}>{gender}</h5>
+            )
+          }
+        )
+        }
         <a
           className="App-link"
           href="https://reactjs.org"
