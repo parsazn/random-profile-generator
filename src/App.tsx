@@ -7,6 +7,7 @@ import {
   Paper,
   Skeleton,
   Stack,
+  Typography,
 } from "@mui/material";
 import { borderRadius } from "@mui/system";
 import RefreshIcon from "@mui/icons-material/Refresh";
@@ -69,22 +70,22 @@ function App() {
         !fetchError &&
         items.length > 0 &&
         items.map((user) => {
-          const { picture, name, login } = user;
+          const { picture, name, login  } = user;
           console.log(name);
           return (
             <Box
               key={login.uuid}
-              sx={{ height: "85vh", m: 8, border: 1, borderColor: "#000" }}
+              sx={{ height: "85vh"}}
             >
               <Grid container spacing={2}>
-                <Grid item xs={12}  sm={3} sx={{ border: 1, m: 4 }}>
-                  <Box >
+                <Grid item xs={12}  sm={2.5} m={8}>
+                  <Box sx={{ width:'100%' , pt:4 , px:1 ,border:1 }} >
                     <Grid
                       container
                       direction="column"
                       justifyContent="center"
                       alignItems="center"
-                      spacing={10}
+                      spacing={2}
                     >
                       <Grid item xs={12} >
                         <Paper
@@ -106,7 +107,16 @@ function App() {
                           </IconButton>
                         </Paper>
                       </Grid>
-                      <Grid item xs={12} sx={{border:1 , width:'100%'}} >
+                      <Grid item xs={12}  sx={{ width:'100%'}} >
+                        <Box pr={2} display="flex" alignItems="center"
+        justifyContent="center" >
+                         <Stack>
+                         <Typography noWrap  variant="h4">{login.username}</Typography> 
+                         <Typography variant="h6">{name.title + ' ' + name.first + ' ' +name.last}</Typography> 
+                         </Stack>
+                         </Box>   
+                      </Grid>        
+                      <Grid item xs={12} sx={{ width:'100%'}} mt={8}>
                         <Stack spacing={3} >
                           <Button variant="contained" fullWidth>Porn</Button>
                           <Button variant="contained">Porn</Button>
