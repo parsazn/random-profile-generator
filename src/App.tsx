@@ -4,6 +4,7 @@ import {
   Grid,
   Button,
   IconButton,
+  Container,
   Paper,
   Skeleton,
   Stack,
@@ -13,14 +14,19 @@ import { borderRadius } from "@mui/system";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import React, { useEffect, useState } from "react";
 import logo from "./logo.svg";
+import SocialMediaCard from "./components/SocialMediaCard";
+import AddressTable from "./components/AddressTable";
 
 function App() {
   const API_URL_USER = "https://randomuser.me/api/";
-  const API_QUOTE = "https://api.kanye.rest/";
+  
   const [items, setItems] = useState<any[]>([]);
   const [fetchError, setFetchError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [quote, setQuote] = useState(null);
+  const [latestPost , setLatestPost] = useState(true);
+  const [address , setAddress] = useState(false);
+  const [privacy , setPrivacy] = useState(false);
+  
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -30,15 +36,6 @@ function App() {
         if (!response.ok) throw new Error("Did not recieve expected profile");
         const listItems = await response.json();
         setItems(listItems.results);
-
-        const responseQuote = await fetch(API_QUOTE);
-        if (!responseQuote.ok)
-          throw new Error("Did not recieve expected profile");
-        const RecievedQuote = await responseQuote.json();
-        console.log(RecievedQuote);
-        setQuote(RecievedQuote.quote);
-
-        setFetchError(null);
         console.log(listItems.results);
       } catch (err: any) {
         setFetchError(err.message);
@@ -52,6 +49,24 @@ function App() {
       (async () => await fetchItems())();
     }, 1000);
   }, []);
+
+  const handleLatestPost = () =>{
+    setLatestPost(!latestPost)
+    address && handleAddress();
+    privacy && handlePrivacy();
+  }
+
+  const handleAddress = () =>{
+    setAddress(!address)
+    latestPost && handleLatestPost(); 
+    privacy && handlePrivacy(); 
+  }
+
+  const handlePrivacy = () =>{
+    setPrivacy(!privacy)
+    latestPost && handleLatestPost() ; 
+    address && handleAddress() ; 
+  }
 
   return (
     <>
@@ -70,16 +85,42 @@ function App() {
         !fetchError &&
         items.length > 0 &&
         items.map((user) => {
-          const { picture, name, login  } = user;
+          const { picture, name, login , location, registered } = user;
           console.log(name);
+          
+          
+
+          const locationData = [
+            {
+              name: 'City',
+              detail: `${location.city}`,
+            },
+            {
+              name: 'Country',
+              detail: `${location.country}`,
+            },
+            {
+              name: 'state',
+              detail: `${location.state}`,
+            },
+            {
+              name: 'street',
+              detail: `${location.street.name + ' ' + location.street.number.toString()}`,
+            },
+            {
+              name: 'timezone',
+              detail: `${location.timezone.description}`,
+            },
+          ]
+
           return (
-            <Box
+            <Container maxWidth="xl"
               key={login.uuid}
               sx={{ height: "85vh"}}
             >
-              <Grid container spacing={2}>
-                <Grid item xs={12}  sm={2.5} m={8}>
-                  <Box sx={{ width:'100%' , pt:4 , px:1 ,border:1 }} >
+              <Grid container spacing={10} mt={6} direction="row">
+                <Grid item xs={12} sm={3.5} >
+                  <Box sx={{ width:'100%' , py:4 , px:1 ,border:1 }} >
                     <Grid
                       container
                       direction="column"
@@ -102,6 +143,7 @@ function App() {
                           <IconButton
                             sx={{ backgroundColor: "#DDDDDD" }}
                             title="Refresh"
+                            onClick={() => window.location.reload()}
                           >
                             <RefreshIcon aria-label="refresh" />
                           </IconButton>
@@ -116,20 +158,36 @@ function App() {
                          </Stack>
                          </Box>   
                       </Grid>        
-                      <Grid item xs={12} sx={{ width:'100%'}} mt={8}>
+                      <Grid item xs={12} sx={{ width:'100%'}} mt={9}>
                         <Stack spacing={3} >
-                          <Button variant="contained" fullWidth>Porn</Button>
-                          <Button variant="contained">Porn</Button>
-                          <Button variant="contained">Porn</Button>
-                          <Button variant="contained">Porn</Button>
+                          <Button variant="contained" onClick={handleLatestPost} disabled={latestPost} fullWidth>Latest Post</Button>
+                          <Button variant="contained" onClick={handleAddress} disabled={address} >Address</Button>
+                          <Button variant="contained" onClick={handlePrivacy} disabled={privacy} >Privacy</Button>
+                          
                         </Stack>
                       </Grid>
                     </Grid>
                   </Box>
                 </Grid>
-                <Grid item xs={12} sm={9}></Grid>
+                <Grid item xs={12} sm={8.5}>
+                  {latestPost && (
+                        <Box border={1} >
+                            <SocialMediaCard></SocialMediaCard>
+                        </Box>)
+                  }
+                  {address && (
+                        <Box border={1} >
+                            <AddressTable rows={locationData}></AddressTable>
+                        </Box>)
+                  }
+                  {privacy && (
+                        <Box border={1} >
+                            <Typography variant="h1"> </Typography>
+                        </Box>)
+                  }
+                </Grid>
               </Grid>
-            </Box>
+            </Container>
           );
         })}
     </>
